@@ -56,3 +56,9 @@ def delete_receipe(request, id):
     queryset.delete()
     return redirect ("/receipes/")
     # return HttpResponse('a')
+
+def login_page(request):
+    context = {
+        'page' : 'Log_in'
+    }
+    return render(request, 'login.html', context)

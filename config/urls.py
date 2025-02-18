@@ -36,6 +36,7 @@ urlpatterns = [
     path('success/', success_page, name='success_page'),
     path('about/', about),
     path('contact/', contact),
+    path('login/', login_page, name='login_page')
 ]
 
 
