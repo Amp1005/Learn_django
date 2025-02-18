@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block start %}
+
+<div class="container mt-5">
+    <style>
+        table {
+          width: 100%;
+          table-layout: fixed;
+          border-collapse: collapse;
+        }
+      
+        th, td {
+          border: 1px solid black;
+          padding: 8px;
+          text-align: center;
+          word-wrap: break-word; /* Ensures long text wraps instead of stretching */
+        }
+      
+        th:nth-child(1) { width: 5%; }  /* # Column */
+        th:nth-child(2) { width: 20%; } /* Recipe Name */
+        th:nth-child(3) { width: 35%; } /* Recipe Description */
+        th:nth-child(4) { width: 20%; } /* Image */
+        th:nth-child(5) { width: 20%; }
+        
+        img {
+          height: 150px; /* Set fixed height */
+          width: auto;  /* Auto-adjust width */
+          display: block;
+          margin: auto;
+        }
+      </style>
+    <form class="col-6 mx-auto card p-3 shadow-lg" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h2>Add Receipe</h2>
+        <hr>
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">Receipe name</label>
+          <input name = "receipe_name" required type="text" class="form-control">
+        </div>
+        
+        <div class="mb-3">
+          <label for="exampleInputPassword1" class="form-label">Receipe Description</label>
+          <textarea class="form-control" name = "receipe_description" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Receipe Image</label>
+            <input name = "receipe_image" type="file" class="form-control">
+          </div>
+        
+          <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck1">
+          <label class="form-check-label" required for="exampleCheck1">Check me out</label>
+        </div>
+        <button type="submit" class="btn btn-success">Add Receipe</button>
+    </hr>
+      </form>
+      <hr>
+      <div class="mt-5">
+        <div class="mx-auto col-6">
+            <div class="mb-3">
+                <form>
+                <label for="exampleInputEmail1" class="form-label">Search Food</label>
+                <input name="search" value="{{receipe.receipe_name}}"  type="text"> 
+                
+               
+
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        </div>
+      </div>
+      
+
+      <table class="table mt-5" m-2>
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Receipe name</th>
+            <th scope="col">Receipe Description</th>
+            <th scope="col">Image</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+            {%for receipe in receipes%}
+          <tr>
+            <th scope="row">{{forloop.counter}}</th>
+            <td scope="row">{{receipe.receipe_name}}</td>
+            <td scope=" row">{{receipe.receipe_description}}</td>
+            <td scope="row">
+                <img src ="/media/{{receipe.receipe_image}}" style="height:200px">
+            </td>
+            <td>
+                <a href="/delete-receipe/{{receipe.id}}" class="btn btn-danger m-2">Delete</button>
+                    <a href="/update-receipe/{{receipe.id}}" class="btn btn-success m-2">Update</button>
+            </td>
+
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+</div>
+
+{% endblock%}
