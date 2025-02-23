@@ -4,9 +4,10 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 
-# Create your views here.
+@login_required(login_url="/login/")
 def receipes(request):
     if request.method == "POST":
         data = request.POST
@@ -69,7 +70,7 @@ def login_page(request):
         
         if not User.objects.filter(username = username).exists():
             messages.error(request, "Invalid username")
-            return render(request, 'register.html')
+            return redirect('/login/')
         
         user =  authenticate(username = username, password = password)
 
@@ -77,7 +78,8 @@ def login_page(request):
             messages.error(request, 'Invalid Password')
             return redirect('/login/')
         else:
-            login()
+            login(request, user)
+            return redirect('/receipes/')
 
     context = {
         'page' : 'Log_in'
@@ -85,7 +87,8 @@ def login_page(request):
     return render(request, 'login.html', context)
 
 def logout_page(request):
-    return('/login/')
+    logout(request)
+    return redirect('/login/')
 
 def register(request):
     if request.method == "POST":
