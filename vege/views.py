@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect
 from .models import *
 from django.http import HttpResponse
+from django.contrib.auth.models import User 
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+
 
 # Create your views here.
 def receipes(request):
@@ -58,7 +62,58 @@ def delete_receipe(request, id):
     # return HttpResponse('a')
 
 def login_page(request):
+    if request.method == "POST":
+        data = request.POST
+        username = data.get('username', '').strip()
+        password = data.get('password', '')
+        
+        if not User.objects.filter(username = username).exists():
+            messages.error(request, "Invalid username")
+            return render(request, 'register.html')
+        
+        user =  authenticate(username = username, password = password)
+
+        if user is None:
+            messages.error(request, 'Invalid Password')
+            return redirect('/login/')
+        else:
+            login()
+
     context = {
         'page' : 'Log_in'
     }
     return render(request, 'login.html', context)
+
+def logout_page(request):
+    return('/login/')
+
+def register(request):
+    if request.method == "POST":
+        data = request.POST
+        first_name = data.get('first_name', '').strip()
+        last_name = data.get('last_name', '').strip()
+        username = data.get('username', '').strip()
+        password = data.get('password', '')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists. Please choose another one.")
+            return render(request, 'register.html')
+        
+        user = User.objects.create(
+            first_name = first_name,
+            last_name = last_name,
+            username = username
+        )
+        user.set_password(password)
+        user.save()
+
+        messages.error(request, "Account created successfully")
+
+        return redirect("/register/")
+
+    context = {
+        'page' : 'Register'
+    }
+    return render(request,'register.html', context)
+
+
